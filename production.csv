@@ -1,0 +1,30 @@
+Description,Blend Code,Blend Description,Quantity (kg),Sequence
+LYL 1,B0001,Black Tea 1,30780,1
+ENV 3,B0012,Black Tea 7,1302,1
+ENV 1,B0009,Black Tea 4,233,1
+ENV 2,B0010,Black Tea 5,3726,2
+LYL Loose 3,B0004,Loose Tea 1,11328,1
+LYL Loose 4,B0004,Loose Tea 1,13680,2
+BB Loose 6,B0005,Loose Tea 2,28800,3
+BB Loose 7,B0006,Loose Tea 3,17820,4
+BB Loose 8,B0006,Loose Tea 3,3240,5
+BB Loose 9,B0006,Loose Tea 3,8640,6
+LYL Loose 5,B0008,Loose Tea 5,8640,7
+LYL Loose 6,B0008,Loose Tea 5,3240,8
+LYL Loose 7,B0007,Loose Tea 4,12960,9
+LYL Loose 1,B0004,Loose Tea 1,6509,1
+LYL Loose 2,B0004,Loose Tea 1,24960,2
+BB Loose 1,B0005,Loose Tea 2,22272,3
+BB Loose 2,B0006,Loose Tea 3,8370,4
+BB Loose 3,B0006,Loose Tea 3,8640,5
+BB Loose 4,B0007,Loose Tea 4,13500,6
+BB Loose 5,B0007,Loose Tea 4,10800,7
+LYL 2,B0002,Black Tea 2,19440,1
+LYL 3,B0001,Black Tea 1,7920,2
+LYL 3,B0001,Black Tea 1,14040,1
+LYL 4,B0002,Black Tea 2,1447,1
+BB 1,B0003,Black Tea 3,33360,2
+LYL 5,B0010,Black Tea 5,5040,1
+BUSH 1,B0011,Black Tea 6,15450,1
+LYL 6,B0003,Black Tea 3,17145,1
+LYL 7,B0001,Black Tea 1,15587,2

@@ -1,0 +1,16 @@
+Blend Code,Blend Description,Quantity (kg),Location
+B0001,Black Tea 1,6000,Silo C
+B0001,Black Tea 1,3000,Silo D
+B0001,Black Tea 1,800,Warehouse
+B0002,Black Tea 2,3000,Silo E
+B0003,Black Tea 3,4500,Silo F
+B0004,Loose Tea 1,5000,Silo A
+B0004,Loose Tea 1,4000,Silo B
+B0005,Loose Tea 2,0,Warehouse
+B0006,Loose Tea 3,0,Warehouse
+B0007,Loose Tea 4,0,Warehouse
+B0008,Loose Tea 5,0,Warehouse
+B0009,Black Tea 4,500,Warehouse
+B0010,Black Tea 5,400,Transfer Station A
+B0011,Black Tea 6,2500,Warehouse
+B0012,Black Tea 7,600,Transfer Station D
