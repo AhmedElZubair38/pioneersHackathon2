@@ -142,6 +142,7 @@
 
 
 from deap import base, creator, tools, algorithms
+from itertools import cycle
 import random
 import pandas as pd
 from TransferTimeMatrix import TransferTimeMatrix
@@ -153,6 +154,7 @@ import numpy
 # Assuming TransferTimeMatrix, ProductionLine, Blend, Silo are defined elsewhere as per your project structure
 
 class Scheduler:
+
     def __init__(self, production_schedule_df, rm_availability_df, blend_stock_availability_df, consumption_rates_efficiency_df, transfer_time_matrix):
         self.production_schedule_df = production_schedule_df
         self.rm_availability_df = rm_availability_df
@@ -223,6 +225,32 @@ class Scheduler:
         print("Best individual is %s, %s" % (best_ind, best_ind.fitness.values))
         # Additional logic to apply the best scheduling solution to your system
 
+    def decode_individual_to_schedule(self, individual):
+        decoded_tasks = [self.production_schedule_df.iloc[idx] for idx in individual]
+        # Sort or prioritize tasks based on youpusr criteria, for example, by 'Due Date'
+        sorted_tasks = sorted(decoded_tasks, key=lambda x: x['Due Date'])
+        # This example simply sorts tasks; you might need a more sophisticated logic here
+
+        # Initialize a schedule for each production line
+        schedule = {line_name: [] for line_name in self.production_lines}
+
+        # Assign tasks to lines based on your logic, for a simple round-robin assignment:
+        lines_cycle = cycle(self.production_lines.keys())
+        for task in sorted_tasks:
+            line_name = next(lines_cycle)
+            schedule[line_name].append(task)
+
+        return schedule
+    
+    def print_schedule(self, schedule):
+        for line_name, tasks in schedule.items():
+            print(f"Schedule for {line_name}:")
+            for task in tasks:
+                print(f" - Task {task['SKU Code']} scheduled with due date {task['Due Date']}")
+            print("\n")
+
+
+
 # Load your CSV data here
 production_schedule_df = pd.read_csv('production.csv')
 rm_availability_df = pd.read_csv('RM.csv')
@@ -238,3 +266,14 @@ scheduler = Scheduler(production_schedule_df, rm_availability_df, blend_stock_av
 
 # Run the GA-based optimization
 scheduler.optimize_schedule_with_ga()
+
+# After the GA optimization in main.py or wherever you run the optimization
+best_ind = tools.selBest(pop, 1)[0]
+print("Best individual is:", best_ind)
+print("Best individual's fitness:", best_ind.fitness.values)
+
+# Decode the best individual to a schedule
+schedule = scheduler.decode_individual_to_schedule(best_ind)
+# Print the decoded schedule
+scheduler.print_schedule(schedule)
+
