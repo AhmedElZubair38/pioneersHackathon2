@@ -1,0 +1,16 @@
+﻿Name,Maximum Capacity (kg),Transfer Type,Line 1,Line 2,Line 3,Line 4,Line 5,Line 6,Line 7,Line 8,Line 9,Line 10,Line 11,Silo A,Silo B,Silo C,Silo D,Silo E,Silo F,Filling Station A,Filling Station B,Transfer Station A,Transfer Station B,Transfer Station C,Transfer Station D,Warehouse,BT Blending,PKT Blending,PKT Blending
+ Silo A ," 6,000 ",Continuous,,,,, 275 ,,,,,,,,,,,,,,,,,,,,,,
+ Silo B ," 6,000 ",Continuous,,,, 240 ,,,,,,,,,,,,,,,,,,,,,,,
+ Silo C ," 6,000 ",Continuous, 831 ," 3,018 "," 3,018 ",,, 677 ," 1,829 ", 704 ," 2,778 "," 1,389 ", 831 ,,,,,,,,,,,,,,,,
+ Silo D ," 6,000 ",Continuous, 831 ," 3,018 "," 3,018 ",,, 677 ," 1,829 ", 704 ," 2,778 "," 1,389 ", 831 ,,,,,,,,,,,,,,,,
+ Silo E ," 6,000 ",Continuous, 831 ," 3,018 "," 3,018 ",,, 677 ," 1,829 ", 704 ," 2,778 "," 1,389 ", 831 ,,,,,,,,,,,,,,,,
+ Silo F ," 6,000 ",Continuous, 831 ," 3,018 "," 3,018 ",,, 677 ," 1,829 ", 704 ," 2,778 "," 1,389 ", 831 ,,,,,,,,,,,,,,,,
+ Filling Station A , 500 ,Batch,,,,,,,,,,,,,,,,,,,, 5 , 5 , 5 , 5 , 5 ,,,
+ Filling Station B , 500 ,Batch,,,,,,,,,,,,,,,,,,,, 5 , 5 , 5 , 5 , 5 ,,,
+ Transfer Station A , 500 ,Batch, 69 , 252 , 252 ,,, 56 , 152 , 59 , 231 , 116 , 69 ,,,,,,,,,,,,,,,,
+ Transfer Station B , 500 ,Batch, 69 , 252 , 252 , 20 , 23 , 56 , 152 , 59 , 231 , 116 , 69 ,,,,,,,,,,,,,,,,
+ Transfer Station C , 500 ,Batch, 69 , 252 , 252 ,,, 56 , 152 , 59 , 231 , 116 , 69 ,,,,,,,,,,,,,,,,
+ Transfer Station D , 500 ,Batch, 69 , 252 , 252 ,,, 56 , 152 , 59 , 231 , 116 , 69 ,,,,,,,,,,,,,,,,
+ Warehouse ,Unlimited,Batch,,,,,,,,,,,,,,,,,,,, 5 , 5 , 5 , 5 ,, 16 , 16 ,16
+ Black Tea Blending ," 1,000 ",Batch,,,,,,,,,,,, 27 , 27 , 27 , 27 , 27 , 27 , 20 , 20 ,,,,,,,,
+ Loose Tea Blending ," 1,000 ",Batch,,,,,,,,,,,, 27 , 27 , 27 , 27 , 27 , 27 , 20 , 20 ,,,,,,,,
