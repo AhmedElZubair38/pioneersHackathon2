@@ -151,8 +151,6 @@ from Blend import Blend
 from Silo import Silo
 import numpy
 
-# Assuming TransferTimeMatrix, ProductionLine, Blend, Silo are defined elsewhere as per your project structure
-
 class Scheduler:
 
     def __init__(self, production_schedule_df, rm_availability_df, blend_stock_availability_df, consumption_rates_efficiency_df, transfer_time_matrix):
@@ -206,14 +204,12 @@ class Scheduler:
         self.toolbox.register("mutate", tools.mutShuffleIndexes, indpb=0.05)
         self.toolbox.register("select", tools.selTournament, tournsize=3)
 
-    def evaluate_individual(self, individual):
-        # This is where you translate the individual (a list of task indices) into a scheduling decision
-        # For simplicity, this is a placeholder. You need to implement this based on your project specifics
-        return (6.0,)  # Dummy fitness value
+    def evaluate_individual(self, individual): return (1.0,)
 
     def optimize_schedule_with_ga(self):
 
         pop = self.toolbox.population(n=300)
+
         CXPB, MUTPB, NGEN = 0.5, 0.2, 40
 
         stats = tools.Statistics(key=lambda ind: ind.fitness.values)
@@ -224,93 +220,65 @@ class Scheduler:
 
         pop, logbook = algorithms.eaSimple(pop, self.toolbox, CXPB, MUTPB, NGEN, stats=stats, verbose=True)
 
-        # Extract and print information about the best solution found
         best_ind = tools.selBest(pop, 1)[0]
-        print("Best individual is %s, %s" % (best_ind, best_ind.fitness.values))
+        print("Best individual is, ", best_ind)
 
         schedule = scheduler.decode_individual_to_schedule(best_ind)
-        # Print the decoded schedule
         scheduler.print_schedule(schedule)
-        # Additional logic to apply the best scheduling solution to your system
-
-    # def decode_individual_to_schedule(self, individual):
-
-    #     decoded_tasks = [self.production_schedule_df.iloc[idx] for idx in individual]
-    #     # Sort or prioritize tasks based on youpusr criteria, for example, by 'Due Date'
-    #     sorted_tasks = sorted(decoded_tasks, key=lambda x: x['Quantity (kg)'])
-    #     # This example simply sorts tasks; you might need a more sophisticated logic here
-
-    #     # Initialize a schedule for each production line
-    #     schedule = {line_name: [] for line_name in self.production_lines}
-
-    #     # Assign tasks to lines based on your logic, for a simple round-robin assignment:
-    #     lines_cycle = cycle(self.production_lines.keys())
-    #     for task in sorted_tasks:
-    #         line_name = next(lines_cycle)
-    #         schedule[line_name].append(task)
-
-    #     return schedule
         
-        def decode_individual_to_schedule(self, individual):
-            decoded_tasks = [self.production_schedule_df.iloc[idx] for idx in individual]
-            # Sort or prioritize tasks based on your criteria, for example, by 'Due Date'
-            sorted_tasks = sorted(decoded_tasks, key=lambda x: x['Sequence'])
+    def decode_individual_to_schedule(self, individual):
 
-            # Initialize a schedule for each production line
-            schedule = {line_name: [] for line_name in self.production_lines}
+        decoded_tasks = [self.production_schedule_df.iloc[idx] for idx in individual]
 
-            # Assign tasks to lines based on your logic, for a simple round-robin assignment:
-            lines_cycle = cycle(self.production_lines.keys())
-            for task in sorted_tasks:
-                line_name = next(lines_cycle)
-                line = self.production_lines[line_name]
-                qty = task['Quantity (kg)']
-                icr = line.ideal_consumption_rate
-                eff = line.efficiency
+        sorted_tasks = sorted(decoded_tasks, key=lambda x: x['Sequence'])
 
-                # Calculate time to complete the target
-                time_to_complete = (qty / (icr * (eff / 100))) * 60
-                schedule[line_name].append({
-                    'task': task,
-                    'start_time': None,  # Placeholder, as start times need to be calculated based on line availability
-                    'time_to_complete': time_to_complete
-                })
+        schedule = {line_name: [] for line_name in self.production_lines}
+
+        lines_cycle = cycle(self.production_lines.keys())
+
+        for task in sorted_tasks:
+
+            line_name = next(lines_cycle)
+            line = self.production_lines[line_name]
+            qty = task['Quantity (kg)']
+            icr = line.consumption_rate
+            eff = line.efficiency
+
+            time_to_complete = (qty / (icr * (eff / 100))) * 60
+
+            schedule[line_name].append({
+
+                'task': task,
+                'start_time': None,  # Placeholder, as start times need to be calculated based on line availability
+                'time_to_complete': time_to_complete
+
+            })
 
         return schedule
+        
     
     def print_schedule(self, schedule):
 
         for line_name, tasks in schedule.items():
+
             print(f"Schedule for {line_name}:")
+
             for task in tasks:
+
                 print(f"  Task {task['task']['SKU Code']}:")
                 print(f"    Quantity: {task['task']['Quantity (kg)']} kg")
                 print(f"    Time to complete: {task['time_to_complete']} minutes")
                 print("\n")
 
 
-
-# Load your CSV data here
 production_schedule_df = pd.read_csv('production.csv')
 rm_availability_df = pd.read_csv('RM.csv')
 blend_stock_availability_df = pd.read_csv('blendstock.csv')
 consumption_rates_efficiency_df = pd.read_csv('Consumption Rates & Efficiencies of Production Lines-.csv')
 updated_parameters_df = pd.read_csv('parameters.csv')
 
-# Assuming transfer_time_matrix is initialized from your transfer times CSV
 transfer_time_matrix = TransferTimeMatrix(updated_parameters_df.set_index('Name'))
 
-# Instantiate Scheduler with the data
 scheduler = Scheduler(production_schedule_df, rm_availability_df, blend_stock_availability_df, consumption_rates_efficiency_df, transfer_time_matrix)
 
-# Run the GA-based optimization
 scheduler.optimize_schedule_with_ga()
-
-# # After the GA optimization in main.py or wherever you run the optimization
-# best_ind = tools.selBest(pop, 1)[0]
-# print("Best individual is:", best_ind)
-# print("Best individual's fitness:", best_ind.fitness.values)
-
-# Decode the best individual to a schedule
-
-
