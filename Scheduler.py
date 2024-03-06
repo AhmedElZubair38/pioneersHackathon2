@@ -212,7 +212,7 @@ class Scheduler:
         return (6.0,)  # Dummy fitness value
 
     def optimize_schedule_with_ga(self):
-        
+
         pop = self.toolbox.population(n=300)
         CXPB, MUTPB, NGEN = 0.5, 0.2, 40
 
@@ -227,23 +227,54 @@ class Scheduler:
         # Extract and print information about the best solution found
         best_ind = tools.selBest(pop, 1)[0]
         print("Best individual is %s, %s" % (best_ind, best_ind.fitness.values))
+
+        schedule = scheduler.decode_individual_to_schedule(best_ind)
+        # Print the decoded schedule
+        scheduler.print_schedule(schedule)
         # Additional logic to apply the best scheduling solution to your system
 
-    def decode_individual_to_schedule(self, individual):
+    # def decode_individual_to_schedule(self, individual):
 
-        decoded_tasks = [self.production_schedule_df.iloc[idx] for idx in individual]
-        # Sort or prioritize tasks based on youpusr criteria, for example, by 'Due Date'
-        sorted_tasks = sorted(decoded_tasks, key=lambda x: x['Due Date'])
-        # This example simply sorts tasks; you might need a more sophisticated logic here
+    #     decoded_tasks = [self.production_schedule_df.iloc[idx] for idx in individual]
+    #     # Sort or prioritize tasks based on youpusr criteria, for example, by 'Due Date'
+    #     sorted_tasks = sorted(decoded_tasks, key=lambda x: x['Quantity (kg)'])
+    #     # This example simply sorts tasks; you might need a more sophisticated logic here
 
-        # Initialize a schedule for each production line
-        schedule = {line_name: [] for line_name in self.production_lines}
+    #     # Initialize a schedule for each production line
+    #     schedule = {line_name: [] for line_name in self.production_lines}
 
-        # Assign tasks to lines based on your logic, for a simple round-robin assignment:
-        lines_cycle = cycle(self.production_lines.keys())
-        for task in sorted_tasks:
-            line_name = next(lines_cycle)
-            schedule[line_name].append(task)
+    #     # Assign tasks to lines based on your logic, for a simple round-robin assignment:
+    #     lines_cycle = cycle(self.production_lines.keys())
+    #     for task in sorted_tasks:
+    #         line_name = next(lines_cycle)
+    #         schedule[line_name].append(task)
+
+    #     return schedule
+        
+        def decode_individual_to_schedule(self, individual):
+            decoded_tasks = [self.production_schedule_df.iloc[idx] for idx in individual]
+            # Sort or prioritize tasks based on your criteria, for example, by 'Due Date'
+            sorted_tasks = sorted(decoded_tasks, key=lambda x: x['Sequence'])
+
+            # Initialize a schedule for each production line
+            schedule = {line_name: [] for line_name in self.production_lines}
+
+            # Assign tasks to lines based on your logic, for a simple round-robin assignment:
+            lines_cycle = cycle(self.production_lines.keys())
+            for task in sorted_tasks:
+                line_name = next(lines_cycle)
+                line = self.production_lines[line_name]
+                qty = task['Quantity (kg)']
+                icr = line.ideal_consumption_rate
+                eff = line.efficiency
+
+                # Calculate time to complete the target
+                time_to_complete = (qty / (icr * (eff / 100))) * 60
+                schedule[line_name].append({
+                    'task': task,
+                    'start_time': None,  # Placeholder, as start times need to be calculated based on line availability
+                    'time_to_complete': time_to_complete
+                })
 
         return schedule
     
@@ -252,8 +283,10 @@ class Scheduler:
         for line_name, tasks in schedule.items():
             print(f"Schedule for {line_name}:")
             for task in tasks:
-                print(f" - Task {task['SKU Code']} scheduled with due date {task['Due Date']}")
-            print("\n")
+                print(f"  Task {task['task']['SKU Code']}:")
+                print(f"    Quantity: {task['task']['Quantity (kg)']} kg")
+                print(f"    Time to complete: {task['time_to_complete']} minutes")
+                print("\n")
 
 
 
@@ -273,13 +306,11 @@ scheduler = Scheduler(production_schedule_df, rm_availability_df, blend_stock_av
 # Run the GA-based optimization
 scheduler.optimize_schedule_with_ga()
 
-# After the GA optimization in main.py or wherever you run the optimization
-best_ind = tools.selBest(pop, 1)[0]
-print("Best individual is:", best_ind)
-print("Best individual's fitness:", best_ind.fitness.values)
+# # After the GA optimization in main.py or wherever you run the optimization
+# best_ind = tools.selBest(pop, 1)[0]
+# print("Best individual is:", best_ind)
+# print("Best individual's fitness:", best_ind.fitness.values)
 
 # Decode the best individual to a schedule
-schedule = scheduler.decode_individual_to_schedule(best_ind)
-# Print the decoded schedule
-scheduler.print_schedule(schedule)
+
 
