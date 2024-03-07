@@ -1,0 +1,30 @@
+Blend Code,Sequence,Quantity,Line,Destination
+B0005,1,28800, Line 8,Warehouse
+B0002,2,19440, Line 6,Warehouse
+B0006,3,17820, Line 11,Silo D
+B0005,4,22272, Line 10,Silo E
+B0004,5,6509, Line 9,Silo A
+B0010,6,5040, Line 1,Warehouse
+B0001,7,15587, Line 1,Silo D
+B0004,8,13680, Line 11,Transfer Station D
+B0011,9,15450, Line 5,Silo A
+B0001,10,30780, Line 7,Warehouse
+B0006,11,8640, Line 4,Silo A
+B0012,12,1302, Line 4,Silo C
+B0010,13,5040, Line 2,Warehouse
+B0007,14,12960, Line 7,Silo A
+B0004,15,13680, Line 3,Warehouse
+B0004,16,13680, Line 2,Silo D
+B0005,17,28800, Line 7,Silo E
+B0006,18,3240, Line 3,Warehouse
+B0004,19,24960, Line 4,Warehouse
+B0003,20,33360, Line 10,Warehouse
+B0006,21,8370, Line 1,Silo B
+B0007,22,12960, Line 6,Silo C
+B0006,23,8370, Line 2,Warehouse
+B0005,24,28800, Line 9,Transfer Station D
+B0005,25,28800, Line 5,Silo C
+B0004,26,6509, Line 3,Silo C
+B0008,27,8640, Line 5,Silo C
+B0001,28,14040, Line 8,Silo A
+B0005,29,28800, Line 6,Silo F
