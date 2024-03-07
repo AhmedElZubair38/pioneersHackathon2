@@ -207,10 +207,12 @@ class Scheduler:
             for task in tasks:
 
                 data.append({
-                    "Line Name": line_name,
                     "Blend Code": task['task']['Blend Code'],
-                    "Quantity": task['quantity'],
-                    "Time to Complete": task['time_to_complete']
+                    "Sequence": task['task']['Sequence'],
+                    "Task Duration (Minutes)": task['time_to_complete'] / 60,
+                    "Task Duration (Hours)": task['time_to_complete'] / 60 /60,
+                    "Quantity" : task['quantity'],
+                    "Line To Go To": line_name
                 })
 
                 print(f"  Blend {task['task']['Blend Code']}:")
@@ -219,7 +221,7 @@ class Scheduler:
                 print("\n")
 
     
-        pd.DataFrame(data, columns=['Line Name', 'Blend Code', 'Quantity (kg)', 'Time to Complete']).to_csv('logbookFinal.csv', index=False)
+        pd.DataFrame(data, columns=['Blend Code', 'Sequence', 'Task Duration (Minutes)', 'Task Duration (Hours)', 'Quantity', 'Line To Go To']).to_csv('logbookFinal.csv', index=False)
 
 
 
