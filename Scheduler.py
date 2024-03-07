@@ -87,7 +87,10 @@ class Scheduler:
 
         pd.DataFrame(best_ind).to_csv('logbook.csv', index=False)
 
-        print("\n ----------------------------- Now We Are Off To The Jupyter Notebook To Link The Blends And Visualize Them! ----------------------------- \n")
+        print("\n ----------------------------- Now We Move To The Jupyter Notebook! ----------------------------- \n")
+
+        # self.schedule_to_dataframe(schedule)
+
 
         
     def decode_individual_to_schedule(self, individual):
@@ -113,15 +116,89 @@ class Scheduler:
             schedule[line_name].append({
 
                 'task': task,
-                'start_time': None, 
+                'start_time': None,
+                'quantity' : task['Quantity (kg)'],
                 'time_to_complete': time_to_complete
 
             })
 
         return schedule
-        
     
-    def print_schedule(self, schedule):
+    def is_valid_schedule(decoded_schedule, locations_info, lines_info):
+        
+        lines_per_location = dict(list)
+        total_time_per_location = dict(int)
+
+        for task in decoded_schedule:
+
+            location = task["Location"]
+            line_name = task["Line Name"]
+            max_capacity = locations_info.get(location, {}).get("Max Capacity", 0)
+            working_mode = locations_info.get(location, {}).get("Working Mode", "continuous")
+
+            time_to_finish = lines_info.get(line_name, 0)
+
+            # Constraint 1: One Silo or Transfer Station can be connected to a maximum of 2 lines
+            if location not in ["Silo A", "Silo B"]:
+                lines_per_location[location].append(line_name)
+                if len(lines_per_location[location]) > 2:
+                    return False
+
+            # Constraint 2: One line can be connected to one Silo or Transfer Station
+            if location in lines_per_location.values():
+                return False
+
+            # Constraint 3: Each location can hold one blend at a time
+            if location in total_time_per_location:
+                return False
+
+            # Constraint 4: Each production line can only pack one type of blend at any given time
+            if location not in ["Silo A", "Silo B"] and line_name in total_time_per_location:
+                return False
+
+            # Check location capacity constraints
+            if max_capacity > 0 and task["Quantity(kg)"] > max_capacity:
+                return False
+
+            # Update the total time spent on each location
+            total_time_per_location[location] += time_to_finish
+
+            for task in decoded_schedule:
+
+                if task["Location"] == "Warehouse" and task["Transfer Mode"] == "Batch":
+
+                    batch_size = locations_info.get("Warehouse", {}).get("Max Capacity", 0)
+                    transfer_time = locations_info.get("Warehouse", {}).get("Transfer Time", 0)
+
+                    if task["Quantity(kg)"] % batch_size != 0:
+
+                        return False
+
+        return True
+    
+    # def schedule_to_dataframe(self, schedule):
+       
+    #     data = []
+
+    #     for line_name, tasks in schedule.items():
+
+    #         for task in tasks:
+
+    #             data.append({
+    #                 "Line Name": line_name,
+    #                 "Blend Code": task['task']['Blend Code'],
+    #                 "Quantity": task['quantity'],
+    #                 "Time to Complete": task['time_to_complete']
+    #             })
+
+    #     pd.DataFrame(data, columns=['Line Name', 'Blend Code', 'Quantity (kg)', 'Time to Complete']).to_csv('logbookFinal.csv', index=False)
+
+    
+    
+    def print_schedule(self, schedule): 
+
+        data = []
+
 
         for line_name, tasks in schedule.items():
 
@@ -129,10 +206,21 @@ class Scheduler:
 
             for task in tasks:
 
-                print(f"  Task {task['task']['SKU Code']}:")
-                print(f"    Quantity: {task['task']['Quantity (kg)']} kg")
+                data.append({
+                    "Line Name": line_name,
+                    "Blend Code": task['task']['Blend Code'],
+                    "Quantity": task['quantity'],
+                    "Time to Complete": task['time_to_complete']
+                })
+
+                print(f"  Blend {task['task']['Blend Code']}:")
+                print(f"    Quantity: {task['quantity']} kg")
                 print(f"    Time to complete: {task['time_to_complete']} minutes")
                 print("\n")
+
+    
+        pd.DataFrame(data, columns=['Line Name', 'Blend Code', 'Quantity (kg)', 'Time to Complete']).to_csv('logbookFinal.csv', index=False)
+
 
 
 production_schedule_df = pd.read_csv('production.csv')
