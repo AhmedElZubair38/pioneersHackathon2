@@ -1,146 +1,3 @@
-
-# # class Scheduler:
-
-# #     def __init__(self, production_schedule, rm_availability, blend_stock, consumption_rates, transfer_times):
-# #         self.production_schedule = production_schedule
-# #         self.rm_availability = rm_availability
-# #         self.blend_stock = blend_stock
-# #         self.consumption_rates = consumption_rates
-# #         self.transfer_times = transfer_times
-        
-# #     def optimize_schedule(self):
-# #         # This method will create the optimized schedule
-# #         pass
-
-# from TransferTimeMatrix import TransferTimeMatrix
-# from ProductionLine import ProductionLine
-# from Blend import Blend
-# from Silo import Silo
-
-# import pandas as pd
-# from deap import base, creator, tools, algorithms
-# import random
-
-
-# # Example CSV loading
-# production_schedule_df = pd.read_csv('path/to/your/production.csv')
-# rm_availability_df = pd.read_csv('path/to/your/RM.csv')
-# blend_stock_availability_df = pd.read_csv('path/to/your/blendstock.csv')
-# consumption_rates_efficiency_df = pd.read_csv('path/to/your/consumption_rates_and_efficiency.csv')
-# updated_parameters_df = pd.read_csv('path/to/your/parameters.csv')  # If you have parameters CSV
-
-
-# # Initializing blends from the blendstock data.
-# class Scheduler:
-#     def __init__(self, production_schedule_df, rm_availability_df, blend_stock_availability_df, consumption_rates_efficiency_df, transfer_time_matrix):
-#         self.production_schedule_df = production_schedule_df
-#         self.rm_availability_df = rm_availability_df
-#         self.blend_stock_availability_df = blend_stock_availability_df
-#         self.consumption_rates_efficiency_df = consumption_rates_efficiency_df
-#         self.transfer_time_matrix = transfer_time_matrix  # Instance of TransferTimeMatrix
-
-#         # Initializing entities
-#         self.silos = {}
-#         self.production_lines = {}
-#         self.blends = {}
-
-#         self._initialize_entities()
-
-#     def _initialize_entities(self):
-#         # Initialize silos from parameters data
-#         for index, row in updated_parameters_df.iterrows():
-#             self.silos[row['Name']] = Silo(row['Name'], row['Maximum Capacity (kg)'], row['Transfer Type'])
-
-#         # Initialize production lines from consumption data
-#         for index, row in consumption_rates_efficiency_df.iterrows():
-#             self.production_lines[row['Name']] = ProductionLine(row['Name'], row['Ideal Consumption Rate (kg/h)'], row['Efficiency (%)'])
-
-#         # Initialize blends from blendstock data
-#         for index, row in blend_stock_availability_df.iterrows():
-#             blend_code = row['Blend Code']
-#             if blend_code not in self.blends:
-#                 self.blends[blend_code] = Blend(blend_code, row['Blend Description'])
-#             # Add the stock information to the blend
-#             self.blends[blend_code].add_stock(row['Location'], row['Quantity (kg)'])
-
-#         # Add raw material availability to silos from RM data
-#         for index, row in rm_availability_df.iterrows():
-#             silo_name = row['Location']
-#             blend_code = row['Blend Code']
-#             quantity = row['Quantity (kg)']
-#             if silo_name in self.silos:
-#                 self.silos[silo_name].add_stock(blend_code, quantity)
-
-#     def optimize_schedule(self):
-#         # Heuristic Approach:
-#         # 1. Sort production tasks based on priority, e.g., due date, quantity.
-#         sorted_tasks = self.sort_tasks(self.production_schedule_df)
-        
-#         # 2. For each task, select the best line and time slot minimizing the idle time and meeting the constraints.
-#         for task in sorted_tasks:
-#             best_line, start_time = self.find_best_line_and_time(task)
-            
-#             # 3. Schedule the task on the selected line and time.
-#             if best_line:
-#                 self.schedule_task(best_line, task, start_time)
-#             else:
-#                 print(f"Cannot schedule task {task['SKU Code']} due to constraints.")
-        
-#         # - find_best_line_and_time: Identifies the optimal production line and start time for a task.
-#         # - schedule_task: Assigns the task to the schedule, updating resources and timings.
-
-#     # - sort_tasks: Orders tasks based on certain criteria.
-#     def sort_tasks(self, tasks_df):
-#         # Example: Sort by earliest due date and then by quantity, descending.
-#         return tasks_df.sort_values(by=['Due Date', 'Quantity (kg)'], ascending=[True, False])
-
-#     def find_best_line_and_time(self, task):
-#         best_line = None
-#         best_start_time = float('inf')
-#         best_fit_metric = float('inf')
-
-#         for line_name, line in self.production_lines.items():
-#             available, start_time = self.check_line_availability(line, task)
-#             if available:
-#                 fit_metric = self.calculate_fit_metric(line, task, start_time)
-#                 if fit_metric < best_fit_metric:
-#                     best_line = line
-#                     best_start_time = start_time
-#                     best_fit_metric = fit_metric
-
-#         return best_line, best_start_time
-
-#     def check_line_availability(self, line, task):
-#         # Placeholder logic for checking line availability.
-#         # In a real scenario, this would involve looking at the line's schedule and finding the next available time slot.
-#         # For simplicity, let's assume every line is initially available at time 0.
-#         return True, 0  # Indicating line is available from time 0.
-
-#     def calculate_fit_metric(self, line, task, start_time):
-#         # A simple fit metric might consider the efficiency of the line for the specific task and the expected idle time.
-#         # Lower values are better. Let's give efficiency a higher weight.
-#         efficiency = line.efficiency
-#         idle_time = start_time - task['Last Finish Time']  # Hypothetical 'Last Finish Time' for a task's line.
-#         fit_metric = idle_time - efficiency  # Simplified metric for demonstration.
-#         return fit_metric
-
-#     def schedule_task(self, line, task, start_time):
-#         # Here, we would update the line's schedule to include the new task.
-#         # Additionally, update the stock levels and any other necessary information.
-#         # For simplicity, let's represent the line's schedule as a list of tasks.
-#         line.schedule.append({'task': task, 'start_time': start_time})
-#         # Update blend stock levels, considering the task's blend and quantity.
-#         blend_code = task['Blend Code']
-#         self.blends[blend_code].reduce_stock('production', task['Quantity (kg)'])
-#         print(f"Scheduled task {task['SKU Code']} on {line.name} at {start_time}.")
-
-# # Instantiate TransferTimeMatrix with the transfer times data
-# transfer_time_matrix = TransferTimeMatrix(updated_parameters_df.set_index('Name'))
-
-# # Instantiate Scheduler with the data from the CSV files
-# scheduler = Scheduler(production_schedule_df, rm_availability_df, blend_stock_availability_df, consumption_rates_efficiency_df, transfer_time_matrix)
-
-
 from deap import base, creator, tools, algorithms
 from itertools import cycle
 import random
@@ -213,18 +70,25 @@ class Scheduler:
         CXPB, MUTPB, NGEN = 0.5, 0.2, 40
 
         stats = tools.Statistics(key=lambda ind: ind.fitness.values)
-        stats.register("avg", numpy.mean)
-        stats.register("std", numpy.std)
-        stats.register("min", numpy.min)
-        stats.register("max", numpy.max)
+        # stats.register("avg", numpy.mean)
+        # stats.register("std", numpy.std)
+        # stats.register("min", numpy.min)
+        # stats.register("max", numpy.max)
 
-        pop, logbook = algorithms.eaSimple(pop, self.toolbox, CXPB, MUTPB, NGEN, stats=stats, verbose=True)
+        pop, logbook = algorithms.eaSimple(pop, self.toolbox, CXPB, MUTPB, NGEN, stats=stats, verbose=False)
 
         best_ind = tools.selBest(pop, 1)[0]
-        print("Best individual is, ", best_ind)
-
         schedule = scheduler.decode_individual_to_schedule(best_ind)
         scheduler.print_schedule(schedule)
+
+        print("\n ---------------------------------------------------------- \n")
+
+        print("\n In Conclusion, The Blends Should Undergo This Sequence Based On Their Computed TTC and Fitness Value From The Genetic Algorithm, ", best_ind, "\n\n")
+
+        pd.DataFrame(best_ind).to_csv('logbook.csv', index=False)
+
+        print("\n ----------------------------- Now We Are Off To The Jupyter Notebook To Link The Blends And Visualize Them! ----------------------------- \n")
+
         
     def decode_individual_to_schedule(self, individual):
 
@@ -249,7 +113,7 @@ class Scheduler:
             schedule[line_name].append({
 
                 'task': task,
-                'start_time': None,  # Placeholder, as start times need to be calculated based on line availability
+                'start_time': None, 
                 'time_to_complete': time_to_complete
 
             })

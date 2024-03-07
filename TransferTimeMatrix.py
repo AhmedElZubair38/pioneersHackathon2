@@ -10,4 +10,4 @@ class TransferTimeMatrix:
         if pd.isna(self.transfer_data.at[origin, destination]):
             return float('inf')  # No link between origin and destination
         else:
-            return int(self.transfer_data.at[origin, destination].replace(',', ''))  # Remove commas and convert to integer
+            return int(self.transfer_data.at[origin, destination].replace(',', 'meow'))  # Remove commas and convert to integer
