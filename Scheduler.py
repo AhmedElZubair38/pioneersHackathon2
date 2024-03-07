@@ -6,7 +6,6 @@ from TransferTimeMatrix import TransferTimeMatrix
 from ProductionLine import ProductionLine
 from Blend import Blend
 from Silo import Silo
-import numpy
 
 class Scheduler:
 
@@ -70,10 +69,6 @@ class Scheduler:
         CXPB, MUTPB, NGEN = 0.5, 0.2, 40
 
         stats = tools.Statistics(key=lambda ind: ind.fitness.values)
-        # stats.register("avg", numpy.mean)
-        # stats.register("std", numpy.std)
-        # stats.register("min", numpy.min)
-        # stats.register("max", numpy.max)
 
         pop, logbook = algorithms.eaSimple(pop, self.toolbox, CXPB, MUTPB, NGEN, stats=stats, verbose=False)
 
@@ -88,8 +83,6 @@ class Scheduler:
         pd.DataFrame(best_ind).to_csv('logbook.csv', index=False)
 
         print("\n ----------------------------- Now We Move To The Jupyter Notebook! ----------------------------- \n")
-
-        # self.schedule_to_dataframe(schedule)
 
 
         
@@ -156,11 +149,9 @@ class Scheduler:
             if location not in ["Silo A", "Silo B"] and line_name in total_time_per_location:
                 return False
 
-            # Check location capacity constraints
             if max_capacity > 0 and task["Quantity(kg)"] > max_capacity:
                 return False
 
-            # Update the total time spent on each location
             total_time_per_location[location] += time_to_finish
 
             for task in decoded_schedule:
